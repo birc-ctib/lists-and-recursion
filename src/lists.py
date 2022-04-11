@@ -1,7 +1,7 @@
 """Linked lists."""
 
 from __future__ import annotations
-from typing import TypeVar, Generic
+from typing import TypeVar, Generic, Optional
 from dataclasses import dataclass
 
 T = TypeVar('T')
@@ -28,7 +28,7 @@ class L(Generic[T]):
         return f"L({self.head}, {self.tail})"
 
 
-List = L[T] | None
+List = Optional[L[T]]  # A list is an L() constructor or None
 
 
 def length(x: List[T]) -> int:
@@ -42,12 +42,10 @@ def length(x: List[T]) -> int:
     >>> length(L(1, L(2, L(3, None))))
     3
     """
-    match x:
-        case None: return 0
-        case L(_, t): return 1 + length(t)
+    return 0 if x is None else 1 + length(x.tail)
 
 
-def sum(x: L[int]) -> int:
+def sum(x: List[int]) -> int:
     """
     Compute the length of x.
 
@@ -58,9 +56,21 @@ def sum(x: L[int]) -> int:
     >>> sum(L(1, L(2, L(3, None))))
     6
     """
-    match x:
-        case None: return 0
-        case L(h, t): return h + sum(t)
+    return 0 if x is None else x.head + sum(x.tail)
+
+
+def contains(x: List[T], e: T) -> bool:
+    """
+    Tell us if e is in x.
+
+    >>> contains(L(1, L(2, L(3, None))), 4)
+    False
+    >>> contains(L(1, L(2, L(3, None))), 2)
+    True
+    """
+    return False if x is None \
+        else True if x.head == e \
+        else contains(x.tail, e)
 
 
 def drop(x: List[T], k: int) -> List[T]:
@@ -77,6 +87,7 @@ def drop(x: List[T], k: int) -> List[T]:
     """
     if k == 0:
         return x
+    assert x is not None, "We can't recurse on an empty list"
     return drop(x.tail, k - 1)
 
 
@@ -93,24 +104,35 @@ def keep(x: List[T], k: int) -> List[T]:
     """
     if k == 0:
         return None
+    assert x is not None, "Can't recurse on an empty list"
     return L(x.head, keep(x.tail, k - 1))
 
 
-def list_cases(x: List[T]) -> str:
+def concat(x: List[T], y: List[T]) -> List[T]:
     """
-    Output which of three cases we have.
+    Concatenate x and y.
 
-    >>> list_cases(None)
-    'x is empty'
-    >>> list_cases(L(42, None))
-    'x is one long and the value at the head is 42'
-    >>> list_cases(L(13, L(42, None)))
-    'x is more than one long and the value at the head is 13'
+    >>> concat(L(1, L(2, None)), L(3, L(4, None)))
+    L(1, L(2, L(3, L(4, None))))
     """
-    match x:
-        case None:
-            return "x is empty"
-        case L(h, None):
-            return f"x is one long and the value at the head is {h}"
-        case L(h, _):
-            return f"x is more than one long and the value at the head is {h}"
+    return y if x is None else L(x.head, concat(x.tail, y))
+
+
+def append(x: List[T], e: T) -> List[T]:
+    """
+    Append e to x.
+
+    >>> append(L(1, L(2, None)), 3)
+    L(1, L(2, L(3, None)))
+    """
+    return concat(x, L(e, None))
+
+
+def rev(x: List[T]) -> List[T]:
+    """
+    Reverse a list.
+
+    >>> rev(L(1, L(2, L(3, None))))
+    L(3, L(2, L(1, None)))
+    """
+    return None if x is None else append(rev(x.tail), x.head)

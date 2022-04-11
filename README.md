@@ -40,78 +40,28 @@ You can create a list of the numbers 1, 2, and 3 with
 x = L(1, L(2, L(3, None)))
 ```
 
-and as you can see we use recursion here as part of defining the data structure. Such data structures are called *recursive*, when an object contains the same kind of objects, here a list containing another list in `tail`.
-
-If you want to write a recursive function on a list, a convinient way is to use patter matching. This isn't described in the book (because it wasn't part of Python when the book came out), but it looks like this:
-
-```python
-def list_cases(x: L[T]) -> str:
-    """
-    Output which of three cases we have.
-
-    >>> list_cases(None)
-    'x is empty'
-    >>> list_cases(L(42, None))
-    'x is one long and the value at the head is 42'
-    >>> list_cases(L(13, L(42, None)))
-    'x is more than one long and the value at the head is 13'
-    """
-    match x:
-        case None:
-            return "x is empty"
-        case L(h, None):
-            return f"x is one long and the value at the head is {h}"
-        case L(h, _):
-            return f"x is more than one long and the value at the head is {h}"
-```
-
-The `match x` means that we will have different cases that will look at the structure of `x`. The `case ...` then tries to matches against the different structures. With `case None` we will match `None`, so we enter that part with an empty list. With `case L(h, None)` we will match a list where `tail` is `None`, so a list with a single argument. the variable `h` will be bound to the head of the list, so we can see the value of `head` that way. The last case, `case L(h, _)` matches any `x` that is a `L`-object, but since `L(h, None)` is matched first, the cases where the list has length one will be caught there, which means that `L(h, _)` is only matched when we have a longer list.
-
-I hope that makes sense; otherwise, study it a bit more. It is a very nice way of handing recursion in general and is widely used in many programming languages (and now also in Python).
+and as you can see we use recursion here as part of defining the data structure. Such data structures are called *recursive*, when an object contains the same kind of objects, here a list containing another list in `tail`. If you have a list `x`, then you can get the head as `x.head` and the tail as `x.tail`.
 
 To show you how we can write recursive functions on this kind of lists, here are two functions that compute the length of a list and the sum of its elements when they are integers:
 
 ```python
-def length(x: L[T]) -> int:
-    """
-    Compute the length of x.
-
-    >>> length(None)
-    0
-    >>> length(L(1, None))
-    1
-    >>> length(L(1, L(2, L(3, None))))
-    3
-    """
-    match x:
-        case None: return 0
-        case L(_, t): return 1 + length(t)
+def length(x: List[T]) -> int:
+    return 0 if x is None else 1 + length(x.tail)
 
 
-def sum(x: L[int]) -> int:
-    """
-    Compute the length of x.
-
-    >>> sum(None)
-    0
-    >>> sum(L(1, None))
-    1
-    >>> sum(L(1, L(2, L(3, None))))
-    6
-    """
-    match x:
-        case None: return 0
-        case L(h, t): return h + sum(t)
+def sum(x: List[int]) -> int:
+    return 0 if x is None else x.head + sum(x.tail)
 ```
-
-If you don't want to pattern match, however, and you do not always want to do that, then `x.head` and `x.tail` gives you the two attributes.
 
 
 ## List exercises
 
+* Write a function, `contains`, that tells us whether an element is in a list. What is the runtime complexity?
 * Write a function, `drop`, that removes the first `k` elements in a list. What is the runtime complexity?
 * Write a function, `keep`, that returns a list of the first `k` elements in the input. What is the runtime complexity?
-
+* Write a function, `append`, that appends an element to a list. Do not modify the original list but return a new list that consists of the original elements and then the new element. What is the runtime complexity?
+* Write a function, `concat`, that concatenates two lists. Do not modify the original lists but return a new list that consists of the original elements from the two lists. What is the runtime complexity?
+* Write a function, `rev`, that reverses a list. Do not modify the original list but return a new list that consists of the original elements in reverse order. What is the runtime complexity?
 
 ## Tail-recursion
 
