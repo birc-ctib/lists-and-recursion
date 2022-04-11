@@ -29,7 +29,7 @@ class L(Generic[T]):
 
 
 # A list is either an L(head, tail) or None
-List = L[T] | None
+List = Optional[L[T]]
 ```
 
 The details of this definition is not something you need to understand right now, but it defines a list over some generic type `T` (you can use any type you want, like `int`, of `str` or whatever). If you have a list `x`, then `x.head` gives you the value at the front of the list, similar to `x[0]` for a Python list, and `x.tail` gives you the rest of the list, like `x[1:]` except that `x.tail` takes constant time while `x[1:]` takes linear time.
@@ -49,8 +49,8 @@ def length(x: List[T]) -> int:
     return 0 if x is None else 1 + length(x.tail)
 
 
-def sum(x: List[int]) -> int:
-    return 0 if x is None else x.head + sum(x.tail)
+def add(x: List[int]) -> int:
+    return 0 if x is None else x.head + add(x.tail)
 ```
 
 
@@ -64,6 +64,30 @@ def sum(x: List[int]) -> int:
 * Write a function, `rev`, that reverses a list. Do not modify the original list but return a new list that consists of the original elements in reverse order. What is the runtime complexity?
 
 ## Tail-recursion
+
+Although Python doesn't implement tail-call optimisation, it is important to know how to translate recursive functions into tail-recursive functions since these can often be replaced with a loop. A quite common case is that you have a recursive data structure, like these lists but we will see more later in the class, where recursive functions are the natural approach to implementing operations on them. Then, to make the operations more efficient, you turn those into tail-recursive operations and then into functions that use loop. You might be able to go there directly in some cases, but in my experience it is easier to first think in terms of recursion and then loops later.
+
+To practise tail-recursion, redo all the functions we have seen so far. Some of them might already be tail-recursive, but that just means that you are quickly done.
+
+To get you started, here are the length and summation functions in tail-recursive form:
+
+```python
+def length_tr(x: List[T], acc: int = 0) -> int:
+    return acc if x is None else length_tr(x.tail, acc + 1)
+
+def add_tr(x: List[int], acc: int = 0) -> int:
+    return acc if x is None else add_tr(x.tail, acc + x.head)
+```
+
+In the template functions I have not included the accumulator. You have to decide if a function needs one, and in case it does, what that accumulator must look like.
+
+* Write a function, `contains_tr`, that tells us whether an element is in a list. What is the runtime complexity?
+* Write a function, `drop_tr`, that removes the first `k` elements in a list. What is the runtime complexity?
+* Write a function, `keep_tr`, that returns a list of the first `k` elements in the input. What is the runtime complexity?
+* Write a function, `append_tr`, that appends an element to a list. Do not modify the original list but return a new list that consists of the original elements and then the new element. What is the runtime complexity?
+* Write a function, `concat_tr`, that concatenates two lists. Do not modify the original lists but return a new list that consists of the original elements from the two lists. What is the runtime complexity?
+* Write a function, `rev_tr`, that reverses a list. Do not modify the original list but return a new list that consists of the original elements in reverse order. What is the runtime complexity?
+
 
 
 

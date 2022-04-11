@@ -45,18 +45,18 @@ def length(x: List[T]) -> int:
     return 0 if x is None else 1 + length(x.tail)
 
 
-def sum(x: List[int]) -> int:
+def add(x: List[int]) -> int:
     """
     Compute the length of x.
 
-    >>> sum(None)
+    >>> add(None)
     0
-    >>> sum(L(1, None))
+    >>> add(L(1, None))
     1
-    >>> sum(L(1, L(2, L(3, None))))
+    >>> add(L(1, L(2, L(3, None))))
     6
     """
-    return 0 if x is None else x.head + sum(x.tail)
+    return 0 if x is None else x.head + add(x.tail)
 
 
 def contains(x: List[T], e: T) -> bool:
@@ -136,3 +136,121 @@ def rev(x: List[T]) -> List[T]:
     L(3, L(2, L(1, None)))
     """
     return None if x is None else append(rev(x.tail), x.head)
+
+
+def length_tr(x: List[T], acc: int = 0) -> int:
+    """
+    Compute the length of x.
+
+    >>> length_tr(None)
+    0
+    >>> length_tr(L(1, None))
+    1
+    >>> length_tr(L(1, L(2, L(3, None))))
+    3
+    """
+    return acc if x is None else length_tr(x.tail, acc + 1)
+
+
+def add_tr(x: List[int], acc: int = 0) -> int:
+    """
+    Compute the length of x.
+
+    >>> add_tr(None)
+    0
+    >>> add_tr(L(1, None))
+    1
+    >>> add_tr(L(1, L(2, L(3, None))))
+    6
+    """
+    return acc if x is None else add_tr(x.tail, acc + x.head)
+
+
+def contains_tr(x: List[T], e: T) -> bool:
+    """
+    Tell us if e is in x.
+
+    >>> contains_tr(L(1, L(2, L(3, None))), 4)
+    False
+    >>> contains_tr(L(1, L(2, L(3, None))), 2)
+    True
+    """
+    return False if x is None \
+        else True if x.head == e \
+        else contains_tr(x.tail, e)
+
+
+def drop_tr(x: List[T], k: int) -> List[T]:
+    """
+    Remove the first k elements.
+
+    >>> x = L(1, L(2, L(3, L(4, None))))
+    >>> drop_tr(x, 0)
+    L(1, L(2, L(3, L(4, None))))
+    >>> drop_tr(x, 1)
+    L(2, L(3, L(4, None)))
+    >>> drop_tr(x, 3)
+    L(4, None)
+    """
+    if k == 0:
+        return x
+    assert x is not None, "We can't recurse on an empty list"
+    return drop_tr(x.tail, k - 1)
+
+
+def keep_tr(x: List[T], k: int, acc: List[T] = None) -> List[T]:
+    """
+    Keep only the first k elements.
+
+    >>> x = L(1, L(2, L(3, L(4, None))))
+    >>> keep_tr(x, 0) # returns None but doesn't print
+    >>> keep_tr(x, 1)
+    L(1, None)
+    >>> keep_tr(x, 3)
+    L(1, L(2, L(3, None)))
+    """
+    if k == 0:
+        return rev_tr(acc)
+    assert x is not None, "Can't recurse on an empty list"
+    return keep_tr(x.tail, k - 1, L(x.head, acc))
+
+
+def rev_prepend(x: List[T], y: List[T]) -> List[T]:  # Helper function
+    """
+    Reverse and prepend x to y.
+
+    >>> rev_prepend(L(2, L(1, None)), L(3, L(4, None)))
+    L(1, L(2, L(3, L(4, None))))
+    """
+    return y if x is None else rev_prepend(x.tail, L(x.head, y))
+
+
+def concat_tr(x: List[T], y: List[T], acc: List[T] = None) -> List[T]:
+    """
+    Concatenate x and y.
+
+    >>> concat_tr(L(1, L(2, None)), L(3, L(4, None)))
+    L(1, L(2, L(3, L(4, None))))
+    """
+    return rev_prepend(acc, y) if x is None \
+        else concat_tr(x.tail, y, L(x.head, acc))
+
+
+def append_tr(x: List[T], e: T) -> List[T]:
+    """
+    Append e to x.
+
+    >>> append_tr(L(1, L(2, None)), 3)
+    L(1, L(2, L(3, None)))
+    """
+    return concat_tr(x, L(e, None))
+
+
+def rev_tr(x: List[T]) -> List[T]:
+    """
+    Reverse a list.
+
+    >>> rev_tr(L(1, L(2, L(3, None))))
+    L(3, L(2, L(1, None)))
+    """
+    return rev_prepend(x, None)
