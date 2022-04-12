@@ -88,7 +88,38 @@ In the template functions I have not included the accumulator. You have to decid
 * Write a function, `concat_tr`, that concatenates two lists. Do not modify the original lists but return a new list that consists of the original elements from the two lists. What is the runtime complexity?
 * Write a function, `rev_tr`, that reverses a list. Do not modify the original list but return a new list that consists of the original elements in reverse order. What is the runtime complexity?
 
+## Loops
 
+Since Python doesn't implement tail-call optimisation, we are still using recursion when we have tail-recursion, and this is sometimes a problem. It will never be a problem for small lists and such, but if you are dealing with large data, e.g., data structures that represent entire genomes, then recursive solutions will exceed the available stack space and your program will crash. Then you need an iterative solution, i.e., you need to use some kind of loop instead of function calls.
+
+Lucklily, if you can translate a recursion into tail-recursion, it is usually straightforward to take the final step and get a looping version. (If you cannot make a tail-recursive function then there are other techniques, but I will have to teach you those at a later point, perhaps a later class such as GSA).
+
+Here are the `length` and `add` functions in a loop version:
+
+```python
+def length_loop(x: List[T]) -> int:
+    acc = 0
+    while x:
+        acc += 1
+        x = x.tail
+    return acc
+
+def add_loop(x: List[int]) -> int:
+    acc = 0
+    while x:
+        acc += x.head
+        x = x.tail
+    return acc
+```
+
+Now you can implement the remaining functions:
+
+* Write a function, `contains_loop`, that tells us whether an element is in a list. What is the runtime complexity?
+* Write a function, `drop_loop`, that removes the first `k` elements in a list. What is the runtime complexity?
+* Write a function, `keep_loop`, that returns a list of the first `k` elements in the input. What is the runtime complexity?
+* Write a function, `append_loop`, that appends an element to a list. Do not modify the original list but return a new list that consists of the original elements and then the new element. What is the runtime complexity?
+* Write a function, `concat_loop`, that concatenates two lists. Do not modify the original lists but return a new list that consists of the original elements from the two lists. What is the runtime complexity?
+* Write a function, `rev_loop`, that reverses a list. Do not modify the original list but return a new list that consists of the original elements in reverse order. What is the runtime complexity?
 
 
 [^1]: In the R programming language, that some of you might be familiar with, this kind of lists used to the main structure, way back in the elder days. The current lists are similar to Python's, but there are still some remnants of linked lists in R, used to handle function arguments. Languages that still use them are those where side-effects are not allowed, such as Haskell or SML, where linked lists give us an efficient way to still work with lists and to build persistent data structures. You will learn more about them later in the class.
