@@ -4,7 +4,7 @@ Python's lists, that we can index into in constant time, but where it takes line
 
 With the kind of linked lists I have in mind you can do one of two things: you can get the value at the front of a list, or you can get a reference to the rest of the list.
 
-I have defined such a list for you:
+We have defined such a list for you:
 
 ```python
 @dataclass
@@ -79,7 +79,7 @@ def add_tr(x: List[int], acc: int = 0) -> int:
     return acc if x is None else add_tr(x.tail, acc + x.head)
 ```
 
-In the template functions I have not included the accumulator. You have to decide if a function needs one, and in case it does, what that accumulator must look like.
+In the template functions the accumulator is not included. You have to decide if a function needs one, and in case it does, what that accumulator must look like.
 
 * Write a function, `contains_tr`, that tells us whether an element is in a list. What is the runtime complexity?
 * Write a function, `drop_tr`, that removes the first `k` elements in a list. What is the runtime complexity?
@@ -92,7 +92,7 @@ In the template functions I have not included the accumulator. You have to decid
 
 Since Python doesn't implement tail-call optimisation, we are still using recursion when we have tail-recursion, and this is sometimes a problem. It will never be a problem for small lists and such, but if you are dealing with large data, e.g., data structures that represent entire genomes, then recursive solutions will exceed the available stack space and your program will crash. Then you need an iterative solution, i.e., you need to use some kind of loop instead of function calls.
 
-Lucklily, if you can translate a recursion into tail-recursion, it is usually straightforward to take the final step and get a looping version. (If you cannot make a tail-recursive function then there are other techniques, but I will have to teach you those at a later point, perhaps a later class such as GSA).
+Lucklily, if you can translate a recursion into tail-recursion, it is usually straightforward to take the final step and get a looping version. (If you cannot make a tail-recursive function then there are other techniques, but I will have to teach you those at a later point.
 
 Here are the `length` and `add` functions in a loop version:
 
